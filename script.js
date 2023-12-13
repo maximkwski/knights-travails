@@ -18,7 +18,7 @@ class ChessboardGraph {
     createEmptyGraph() {
         const graph = {};
         return graph;
-      }
+    }
 
     createGraph() {
         for (let row = 0; row < this.size; row++) {
@@ -58,6 +58,45 @@ class ChessboardGraph {
         }
         this.graph[from.row * this.size + from.col].push(to)
     }
+
+    knightMoves(start, end) {
+        const startNode = { row: start[0], col: start[1] };
+        const endNode = { row: end[0], col: end[1] };
+    
+        const visited = new Set();
+        const queue = [[startNode, []]]; // Queue of nodes to visit along with their path
+    
+        while (queue.length > 0) {
+          const [currentNode, path] = queue.shift();
+    
+          if (currentNode.row === endNode.row && currentNode.col === endNode.col) {
+            // Found the destination, return the path
+            return [...path, endNode];
+          }
+    
+          if (!visited.has(currentNode.row * this.size + currentNode.col)) {
+            visited.add(currentNode.row * this.size + currentNode.col);
+    
+            for (const neighbor of this.graph[currentNode.row * this.size + currentNode.col] || []) {
+              const newPath = [...path, currentNode];
+              queue.push([neighbor, newPath]);
+            }
+          }
+        }
+    
+        // If no path is found
+        return [];
+      }
 }
 
 const chessboard = new ChessboardGraph(8)
+const startSquare = [0, 0]
+const endSquare = [2, 3]
+
+// Access the graph (adjacency list)
+// console.log(chessboard.graph);
+
+const shortestPath = chessboard.knightMoves(startSquare, endSquare);
+console.log(shortestPath);
+
+
